@@ -153,9 +153,17 @@ if [ "$LAUNCH_AGENT" = "yes" ]; then
     && say "menu bar app started (and will start at every login)"
 fi
 
+PATH_HINT=""
+case ":$PATH:" in
+  *":$PREFIX/bin:"*) ;;
+  *) PATH_HINT="
+  Add it to your PATH first:   export PATH=\"$PREFIX/bin:\$PATH\"   (append to ~/.zshrc to keep it)"
+esac
+
 cat <<EOF
 
 Installed to $PREFIX/bin.
+$PATH_HINT
 
 Next steps
   1. Power the headset on and keep it in range.
