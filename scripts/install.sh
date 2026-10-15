@@ -137,7 +137,12 @@ else
     say "no checksum published for this release; skipping verification"
   fi
   tar -xzf "$STAGE/$ASSET" -C "$STAGE"
-  install_from_dir "$STAGE/bin"
+  # The release asset unpacks to <asset-name>/bin; older or hand-made tarballs may use bin/ directly.
+  if [ -d "$STAGE/edifier-macos-$ARCH/bin" ]; then
+    install_from_dir "$STAGE/edifier-macos-$ARCH/bin"
+  else
+    install_from_dir "$STAGE/bin"
+  fi
 fi
 
 if [ "$LAUNCH_AGENT" = "prompt" ]; then
