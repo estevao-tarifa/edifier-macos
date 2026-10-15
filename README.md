@@ -1,5 +1,9 @@
 # Edifier for macOS
 
+[![ci](https://github.com/estevao-tarifa/edifier-macos/actions/workflows/ci.yml/badge.svg)](https://github.com/estevao-tarifa/edifier-macos/actions/workflows/ci.yml)
+[![release](https://img.shields.io/github/v/release/estevao-tarifa/edifier-macos?sort=semver)](https://github.com/estevao-tarifa/edifier-macos/releases)
+[![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 macOS cannot drive a third-party headset's noise control: Control Center only offers its
 noise-control tile for Apple/Beats devices because that tile is fed by Apple's proprietary
 accessory protocol, which Edifier firmware does not implement (evidence in
