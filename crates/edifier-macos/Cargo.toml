@@ -1,0 +1,12 @@
+[package]
+name = "edifier-macos"
+description = "macOS system integration helpers (classic Bluetooth audio link via IOBluetooth)"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[dependencies]
+anyhow = { workspace = true }
+objc2-foundation = "0.3"
+objc2-io-bluetooth = "0.3"

@@ -1,0 +1,8 @@
+# Rust
+target/
+
+# macOS
+.DS_Store
+
+# Local verification output
+*.log

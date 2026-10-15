@@ -1,0 +1,46 @@
+name: release
+
+# Tag a commit (`git tag v0.1.0 && git push origin v0.1.0`) and this builds both architectures,
+# packages `edifier-macos-<arch>.tar.gz` (a `bin/` directory with the three binaries, plus LICENSE
+# and README) with a matching `.sha256`, and attaches them to the GitHub release. `scripts/install.sh`
+# consumes exactly those assets.
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-14
+            arch: aarch64
+          - runner: macos-13
+            arch: x86_64
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Build
+        run: cargo build --release --workspace
+      - name: Package
+        run: |
+          set -euo pipefail
+          name="edifier-macos-${{ matrix.arch }}"
+          mkdir -p "dist/$name/bin"
+          cp target/release/edifierctl target/release/edifier-mcp target/release/edifier-menubar "dist/$name/bin/"
+          cp README.md LICENSE "dist/$name/"
+          tar -C dist -czf "dist/$name.tar.gz" "$name"
+          ( cd dist && shasum -a 256 "$name.tar.gz" > "$name.tar.gz.sha256" )
+          ls -la dist
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/edifier-macos-${{ matrix.arch }}.tar.gz
+            dist/edifier-macos-${{ matrix.arch }}.tar.gz.sha256
+          generate_release_notes: true
