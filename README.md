@@ -13,7 +13,7 @@ collected by [mEDIFIER](https://github.com/wh201906/mEDIFIER); see
 ## Install
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/<owner>/<repo>/main/scripts/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/estevao-tarifa/edifier-macos/main/scripts/install.sh | sh
 ```
 
 The installer builds the workspace when it runs from a checkout and otherwise downloads the release
@@ -25,8 +25,8 @@ every login. Useful flags: `--prefix DIR`, `--version vX.Y.Z`, `--from-source`,
 <details>
 <summary>Publishing your own copy (fork, then tag a release)</summary>
 
-1. Push this repository to GitHub and keep the branch named `main`.
-2. Replace `<owner>/<repo>` above with your repository.
+1. Fork this repository and keep the branch named `main`.
+2. Replace `estevao-tarifa/edifier-macos` in the line above with your fork.
 3. Tag a release: `git tag v0.1.0 && git push origin v0.1.0`. The `release` workflow builds
    `edifier-macos-aarch64.tar.gz` and `edifier-macos-x86_64.tar.gz` with checksums and attaches them
    to the GitHub release, which is what the installer downloads.
