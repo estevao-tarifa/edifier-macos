@@ -124,17 +124,19 @@ else
     URL="https://github.com/$REPO/releases/download/$VERSION/edifier-macos-$ARCH.tar.gz"
     CHECKSUM_URL="https://github.com/$REPO/releases/download/$VERSION/edifier-macos-$ARCH.tar.gz.sha256"
   fi
+  # Keep the published asset name: the .sha256 file lists it, and `shasum -c` looks it up by name.
+  ASSET="edifier-macos-$ARCH.tar.gz"
   say "Downloading $URL"
-  curl -fsSL "$URL" -o "$STAGE/edifier.tar.gz" \
+  curl -fsSL "$URL" -o "$STAGE/$ASSET" \
     || die "cannot download the release — is $REPO public and does it have a $ARCH build?"
-  if curl -fsSL "$CHECKSUM_URL" -o "$STAGE/edifier.tar.gz.sha256" 2>/dev/null; then
-    ( cd "$STAGE" && shasum -a 256 -c edifier.tar.gz.sha256 >/dev/null ) \
+  if curl -fsSL "$CHECKSUM_URL" -o "$STAGE/$ASSET.sha256" 2>/dev/null; then
+    ( cd "$STAGE" && shasum -a 256 -c "$ASSET.sha256" >/dev/null ) \
       || die "checksum mismatch: the download is corrupted"
     say "checksum verified"
   else
     say "no checksum published for this release; skipping verification"
   fi
-  tar -xzf "$STAGE/edifier.tar.gz" -C "$STAGE"
+  tar -xzf "$STAGE/$ASSET" -C "$STAGE"
   install_from_dir "$STAGE/bin"
 fi
 
