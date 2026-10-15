@@ -8,8 +8,8 @@
 # From a checkout, without arguments, it builds the workspace in release mode and installs the three
 # binaries into ~/.local/bin. Environment overrides:
 #
-#   EDIFIER_REPO=owner/repo   repository to download releases from (required when this script is
-#                             streamed, optional in a checkout where the git remote is used)
+#   EDIFIER_REPO=owner/repo   repository to download releases from (default: the repository this
+#                             script ships with; a checkout uses its own origin remote)
 #   EDIFIER_VERSION=v0.1.0    release tag to install (default: latest)
 #   EDIFIER_PREFIX=~/.local   install prefix (binaries go to <prefix>/bin)
 #   EDIFIER_FROM_SOURCE=1     build from the checkout instead of downloading a release
@@ -18,9 +18,13 @@
 # Flags: --prefix DIR | --version TAG | --from-source | --launch-agent | --no-launch-agent | --uninstall
 set -euo pipefail
 
+# Where releases are downloaded from when this script is streamed (curl | sh). Forks override it
+# with EDIFIER_REPO=owner/repo.
+DEFAULT_REPO="estevao-tarifa/edifier-macos"
+
 PREFIX="${EDIFIER_PREFIX:-$HOME/.local}"
 VERSION="${EDIFIER_VERSION:-latest}"
-REPO="${EDIFIER_REPO:-}"
+REPO="${EDIFIER_REPO:-$DEFAULT_REPO}"
 FROM_SOURCE="${EDIFIER_FROM_SOURCE:-0}"
 LAUNCH_AGENT="prompt"
 UNINSTALL=0
@@ -87,11 +91,9 @@ CHECKOUT=""
 if [ -n "$SCRIPT_DIR" ] && [ -f "$SCRIPT_DIR/../Cargo.toml" ]; then
   CHECKOUT="$(cd "$SCRIPT_DIR/.." && pwd)"
 fi
-if [ -z "$REPO" ] && [ -n "$CHECKOUT" ] && have git; then
-  REPO="$(git -C "$CHECKOUT" remote get-url origin 2>/dev/null | sed -E 's#.*[:/]([^/]+/[^/]+?)(\.git)?$#\1#' || true)"
-fi
-if [ "$FROM_SOURCE" = "0" ] && [ -z "$CHECKOUT" ] && [ -z "$REPO" ]; then
-  die "no repository to download from: set EDIFIER_REPO=owner/repo (see --help) or clone the repository and run scripts/install.sh"
+if [ -n "$CHECKOUT" ] && have git; then
+  ORIGIN="$(git -C "$CHECKOUT" remote get-url origin 2>/dev/null | sed -E 's#.*[:/]([^/]+/[^/]+?)(\.git)?$#\1#' || true)"
+  [ -n "$ORIGIN" ] && REPO="$ORIGIN"
 fi
 
 STAGE="$(mktemp -d)"
